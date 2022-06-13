@@ -2,18 +2,32 @@ version: '3.7'
 
 services:
   kong:
-    image: kong/kong:2.7.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+
     ports:
       - "8000:8000"
     volumes:
       - ${PWD}/../src/hello-world:/usr/local/share/lua/5.1/kong/plugins/hello-world
+      - ${PWD}/../src/oauth2-token-introspection-request:/usr/local/share/lua/5.1/kong/plugins/oauth2-token-introspection-request
       - ${PWD}/kong.yaml:/usr/local/kong/declarative/kong.yaml
     environment:
       - KONG_DATABASE=off
       - KONG_DECLARATIVE_CONFIG=/usr/local/kong/declarative/kong.yaml
       - KONG_LOG_LEVEL=debug
-      - KONG_PLUGINS=bundled,hello-world
+      - KONG_PLUGINS=bundled,hello-world,oauth2-token-introspection-request
       - KONG_PROXY_ACCESS_LOG=/dev/stdout
       - KONG_PROXY_ERROR_LOG=/dev/stderr
       - KONG_ADMIN_ACCESS_LOG=/dev/stdout
       - KONG_ADMIN_ERROR_LOG=/dev/stderr
+
+  oauth:
+    build: 
+      dockerfile: Dockerfile
+      context: ./oauth
+    ports:
+      - "6000:5000"
+
+  httpbin:
+    image: kennethreitz/httpbin

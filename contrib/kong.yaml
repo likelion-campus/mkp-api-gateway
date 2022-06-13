@@ -1,26 +1,21 @@
 _format_version: "1.1"
     
 services:
-  - name: json-placeholder
-    url: https://jsonplaceholder.typicode.com
+  - name: token-introspect-test
+    url: http://httpbin
     plugins:
-    - name: hello-world
-      config:
-        say_hello: false
-    routes:
-    - name: json-placeholder-route
-      paths:
-      - /json
-
-  - name: static-response
-    url: https://google.com
-    plugins:
-      - name: request-termination
+      - name: oauth2-token-introspection-request
         config:
-          status_code: 200
-          message: "hello, world!"
+          auth_method: client_secret_basic
+          auth_response_headers_to_forward:
+          - sub
+          - account-addresses
+          - current-address
+          client_id: test
+          client_secret: secret
+          token_introspect_url: http://oauth:5000/oauth/token/introspect
     routes:
-      - name: hello-world-route
-        strip_path: false
+      - name: token-introspect-test
+        strip_path: true
         paths:
-          - /hello
+          - /httpbin
