@@ -1,0 +1,26 @@
+_format_version: "1.1"
+    
+services:
+  - name: json-placeholder
+    url: https://jsonplaceholder.typicode.com
+    plugins:
+    - name: hello-world
+      config:
+        say_hello: false
+    routes:
+    - name: json-placeholder-route
+      paths:
+      - /json
+
+  - name: static-response
+    url: https://google.com
+    plugins:
+      - name: request-termination
+        config:
+          status_code: 200
+          message: "hello, world!"
+    routes:
+      - name: hello-world-route
+        strip_path: false
+        paths:
+          - /hello
